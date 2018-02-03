@@ -1,0 +1,50 @@
+-- mul_mat_vec {m,n} (A :: double[m,n]) (v :: double[n]) :: double[m]
+--   := A * v;
+
+import prelude;
+
+trace {n} (A :: double[n, n]) ::
+  double := (
+    s := 0.0;
+    for j in 0:n ->
+      s <- s + A[j,j];
+    s
+  );
+
+frobenius_norm {m, n} (A :: double[m, n])
+  :: double := (
+    sqrt (trace (A^T * A))
+);
+
+frobenius_norm_explicit {m, n} (A :: double[m, n]) ::
+  double := (
+  sqrt(
+    s := 0.0;
+    for i in 0:m ->
+      for j in 0:n ->
+        s <- s + (A[i,j] * A[i,j]);
+
+    s
+  );
+);
+
+main () :: int :=
+  ( 
+    m :=
+    mat(1.0, 0, 2;
+        1,   1, -1;
+        0,   0, 1;
+        0,   0, 22);
+    A := m;
+
+    fn   := frobenius_norm A;
+    fn_e := frobenius_norm_explicit A;
+
+    printf "fn   := %f\n" fn;
+    printf "fn_e := %f\n" fn_e;
+
+    tol := 1e-6;
+    assert(fabs(fn - fn_e) < tol);
+
+    return 0;
+  );
